@@ -1,0 +1,39 @@
+{
+  "name": "unitemps-sdk",
+  "version": "1.0.0",
+  "description": "Node.js SDK for Unitemps",
+  "license": "MIT",
+  "author": "Adam Jones (domdomegg)",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "pretest": "npm run build",
+    "test": "jest",
+    "lint": "prettier --parser typescript \"{src,test}/**/*.ts\" -l",
+    "lint:fix": "prettier --parser typescript \"{src,test}/**/*.ts\" --write",
+    "clean": "rm -rf dist",
+    "prebuild": "npm run clean",
+    "build": "tsc"
+  },
+  "dependencies": {
+    "@types/cheerio": "^0.22.15",
+    "@types/node": "^13.1.8",
+    "axios": "^0.19.1",
+    "cheerio": "^1.0.0-rc.3"
+  },
+  "devDependencies": {
+    "@types/jest": "^24.9.0",
+    "jest": "^24.9.0",
+    "prettier": "^1.19.1",
+    "ts-jest": "^24.3.0",
+    "typescript": "^3.7.5"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:domdomegg/unitemps-sdk.git"
+  }
+}
