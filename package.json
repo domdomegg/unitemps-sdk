@@ -35,5 +35,9 @@
   "repository": {
     "type": "git",
     "url": "git@github.com:domdomegg/unitemps-sdk.git"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node"
   }
 }
