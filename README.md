@@ -1,7 +1,6 @@
 # unitemps-sdk
 
-[![CI Status](https://github.com/domdomegg/unitemps-sdk/workflows/CI/badge.svg)](https://github.com/domdomegg/unitemps-sdk/actions?workflow=CI)
-[![CD Status](https://github.com/domdomegg/unitemps-sdk/workflows/CD/badge.svg)](https://github.com/domdomegg/unitemps-sdk/actions?workflow=CD)
+[![CI/CD Status](https://github.com/domdomegg/unitemps-sdk/workflows/CI/CD/badge.svg)](https://github.com/domdomegg/unitemps-sdk/actions?workflow=CI/CD)
 [![JavaScript Standard Style](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 [![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/domdomegg/unitemps-sdk/blob/master/LICENSE)
 [![NPM Package Version](https://img.shields.io/npm/v/unitemps-sdk)](https://www.npmjs.com/package/unitemps-sdk) 
