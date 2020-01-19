@@ -7,8 +7,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
-    "dist",
-    "src"
+    "dist"
   ],
   "scripts": {
     "pretest": "npm run build",
@@ -16,14 +15,14 @@
     "lint": "prettier --parser typescript \"{src,test}/**/*.ts\" -l",
     "lint:fix": "prettier --parser typescript \"{src,test}/**/*.ts\" --write",
     "clean": "rm -rf dist",
-    "prebuild": "npm run clean",
-    "build": "tsc"
+    "build": "tsc",
+    "prepublishOnly": "npm run clean && npm run build"
   },
   "dependencies": {
     "@types/cheerio": "^0.22.15",
     "@types/node": "^13.1.8",
     "axios": "^0.19.1",
-    "cheerio": "^1.0.0-rc.3"
+    "cheerio": "^0.22.0"
   },
   "devDependencies": {
     "@types/jest": "^24.9.0",
