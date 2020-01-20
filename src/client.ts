@@ -87,7 +87,9 @@ export default {
       .map(
         ($): Types.TimesheetResponse => ({
           ref: $.find('[data-label="Ref"]').text(),
-          id: "12345678",
+          id: $.find('[data-label="Job title"] > a')
+            .attr("href")
+            .split("/")[4],
           jobTitle: $.find('[data-label="Job title"]').text(),
           weekEnding: dateParser($.find('[data-label="Week"]').text()),
           hours: hoursParser($.find('[data-label="Hours"]').text()),
