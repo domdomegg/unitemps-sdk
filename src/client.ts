@@ -26,7 +26,7 @@ export default {
    * @param username Unitemps username
    * @param password Unitemps password
    */
-  login(
+  async login(
     username: string,
     password: string
   ): Promise<{
@@ -36,22 +36,24 @@ export default {
     if (!username) throw new Error("Missing username");
     if (!password) throw new Error("Missing password");
 
-    return http
-      .post<Types.CheerioedResponse>(`${BASE_URL}/Account/SignOn`, {
+    const res = await http.post<Types.CheerioedResponse>(
+      `${BASE_URL}/Account/SignOn`,
+      {
         Username: username,
         Password: password
-      })
-      .then(res => {
-        const validationErrors = res.data.$(".validation-summary-errors");
-        if (validationErrors.length)
-          throw new Error(validationErrors.text().trim());
+      }
+    );
 
-        // .UNITEMPS cookie is used for authentication
-        const authCookie = res.headers["set-cookie"][0].split(";")[0];
-        http.defaults.headers.Cookie = authCookie;
+    const validationErrors = res.data.$(".validation-summary-errors");
+    if (validationErrors.length) {
+      throw new Error(validationErrors.text().trim());
+    }
 
-        return { res, authCookie };
-      });
+    // .UNITEMPS cookie is used for authentication
+    const authCookie = res.headers["set-cookie"][0].split(";")[0];
+    http.defaults.headers.Cookie = authCookie;
+
+    return { res, authCookie };
   },
 
   /**
@@ -67,42 +69,39 @@ export default {
    * These will be the ones displayed on https://www.unitemps.com/members/candidate/timesheets
    * @param page Page number
    */
-  getTimesheets(
+  async getTimesheets(
     page: number = 1
   ): Promise<{
     res: AxiosResponse<Types.CheerioedResponse>;
     timesheets: Array<Types.TimesheetResponse>;
     pageData: Types.PageDataResponse;
   }> {
-    return http
-      .get<Types.CheerioedResponse>(
-        `${BASE_URL}/members/candidate/timesheets?page=${page}`
-      )
-      .then(res => {
-        const timesheetTableRowElems = res.data.$(".table tbody tr");
-        const timesheets = timesheetTableRowElems.toArray().map(
-          (element): Types.TimesheetResponse => {
-            const $ = cheerio(element);
+    const res = await http.get<Types.CheerioedResponse>(
+      `${BASE_URL}/members/candidate/timesheets?page=${page}`
+    );
 
-            return {
-              ref: $.find('[data-label="Ref"]').text(),
-              id: "12345678", // TODO
-              jobTitle: $.find('[data-label="Job title"]').text(),
-              weekEnding: dateParser($.find('[data-label="Week"]').text()),
-              hours: hoursParser($.find('[data-label="Hours"]').text()),
-              pay: moneyParser($.find('[data-label="Pay"]').text()),
-              status: $.find('[data-label="Status"]').text()
-            };
-          }
-        );
+    const timesheetTableRowElems = res.data.$(".table tbody tr");
+    const timesheets = timesheetTableRowElems
+      .toArray()
+      .map(cheerio)
+      .map(
+        ($): Types.TimesheetResponse => ({
+          ref: $.find('[data-label="Ref"]').text(),
+          id: "12345678",
+          jobTitle: $.find('[data-label="Job title"]').text(),
+          weekEnding: dateParser($.find('[data-label="Week"]').text()),
+          hours: hoursParser($.find('[data-label="Hours"]').text()),
+          pay: moneyParser($.find('[data-label="Pay"]').text()),
+          status: $.find('[data-label="Status"]').text()
+        })
+      );
 
-        const pageResultsElem = res.data.$(".page-results");
-        const { 0: from, 1: to, 2: total } = pageResultsElem
-          .text()
-          .match(/\d+/g)
-          .map(parseInt);
+    const pageResultsElem = res.data.$(".page-results");
+    const { 0: from, 1: to, 2: total } = pageResultsElem
+      .text()
+      .match(/\d+/g)
+      .map(parseInt);
 
-        return { res, timesheets, pageData: { from, to, total } };
-      });
+    return { res, timesheets, pageData: { from, to, total } };
   }
 };
