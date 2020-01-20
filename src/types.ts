@@ -32,7 +32,7 @@ export type TimesheetResponse = {
   weekEnding: ParsedDate;
   hours: ParsedFloat;
   pay: ParsedFloat;
-  status: string;
+  status: "Authorised" | "Entered" | "Paid" | "Rejected" | string;
 };
 
 export type JobResponse = {
@@ -44,5 +44,5 @@ export type JobResponse = {
   holidayRate: ParsedFloat;
   start: ParsedDate;
   end: ParsedDate;
-  status: string;
+  status: "Current" | "Past" | string;
 };
