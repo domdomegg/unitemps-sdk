@@ -1,17 +1,20 @@
 import axios, { AxiosResponse } from "axios";
 import cheerio from "cheerio";
+import qs from "querystring";
 import * as Types from "./types";
 import moneyParser from "./parsers/money";
 import hoursParser from "./parsers/hours";
 import dateParser from "./parsers/date";
+import { timeSheethoursToUnitempsForm } from "./util/timesheetHours";
+import { months } from "./util/date";
 
 const BASE_URL = "https://www.unitemps.com";
 
 const http = axios.create({
-  headers: {
-    "User-Agent":
-      "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36" // TODO: Is this actually necessary?
-  },
+  // headers: {
+  //   "User-Agent":
+  //     "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36" // TODO: Is this actually necessary?
+  // },
   transformResponse: (data, headers): Types.CheerioedResponse => ({
     html: data,
     $: cheerio.load(data)
@@ -20,7 +23,7 @@ const http = axios.create({
   validateStatus: status => status < 400
 });
 
-export default {
+const unitemps = {
   /**
    * Login to Unitemps. All future calls will be authenticated as this user, use logout to avoid this.
    * @param username Unitemps username
@@ -50,7 +53,10 @@ export default {
     }
 
     // .UNITEMPS cookie is used for authentication
-    const authCookie = res.headers["set-cookie"][0].split(";")[0];
+    const cookies: Array<string> = res.headers["set-cookie"];
+    const authCookie = cookies
+      .find(string => string.includes(".UNITEMPS"))
+      .split(";")[0];
     http.defaults.headers.Cookie = authCookie;
 
     return { res, authCookie };
@@ -154,5 +160,111 @@ export default {
       .map(parseInt);
 
     return { res, jobs, pageData: { from, to, total } };
+  },
+
+  /**
+   * Save a draft timesheet, either creating a new one or updating an existing one.
+   * @param jobId Job ID to submit this timesheet under. Not updatable.
+   * @param weekEnding: Week ending date (Sunday) for this timesheet, in ISO 8601 format. Necessary if creating a timesheet.
+   * @param timesheetId: Timesheet ID. Necessary if updating a timesheet.
+   * @param hoursWorked: Hours worked to enter on the timesheet. Updatable - will replace any existing hours.
+   * @param notes: Notes to attach to the timesheet. Updatable - will replace any existing notes.
+   */
+  async saveDraftTimesheet({
+    jobId,
+    weekEnding,
+    timesheetId = "",
+    hoursWorked,
+    notes
+  }:
+    | {
+        jobId: string | number;
+        weekEnding: string;
+        timesheetId?: string | number;
+        hoursWorked: Types.TimesheetHours;
+        notes: string;
+      }
+    | {
+        jobId: string | number;
+        weekEnding?: string;
+        timesheetId: string | number;
+        hoursWorked: Types.TimesheetHours;
+        notes: string;
+      }): Promise<{
+    res: AxiosResponse<Types.CheerioedResponse>;
+  }> {
+    const { formToken } = await unitemps.requireRequestVerificationAuth(
+      `${BASE_URL}/members/candidate/createtimesheet/${jobId}`
+    );
+
+    // Whether this operation is an update of an existing timesheet or the creation of a new one
+    const isUpdate = !!timesheetId.toString().length;
+
+    // We only need to check the date if we're creating a new timesheet
+    if (!isUpdate && !/^\d\d\d\d-[01]\d-[0123]\d/.test(weekEnding)) {
+      throw new Error("Invalid date format for weekEnding: " + weekEnding);
+    }
+
+    // Creates a string like '19 January 2020'
+    const WeekEndingDate = isUpdate
+      ? ""
+      : `${weekEnding.substr(8, 2)} ${
+          months[parseInt(weekEnding.substr(5, 2))]
+        } ${weekEnding.substr(0, 4)}`;
+
+    const res = await http.post<Types.CheerioedResponse>(
+      `${BASE_URL}/members/candidate/createtimesheet/${jobId}`,
+      qs.stringify({
+        AssignmentId: jobId,
+        Editing: isUpdate ? "True" : "False",
+        timesheetId,
+        WeekEndingDate,
+        ...timeSheethoursToUnitempsForm(hoursWorked),
+        Notes: notes,
+        submitAction: "Save",
+        __RequestVerificationToken: formToken
+      }),
+      { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
+    );
+
+    const validationErrors = res.data.$(".validation-summary-errors");
+    if (validationErrors.length) {
+      throw new Error(validationErrors.text().trim());
+    }
+
+    return { res };
+  },
+
+  async requireRequestVerificationAuth(
+    getUrl: string
+  ): Promise<{
+    res: AxiosResponse<Types.CheerioedResponse>;
+    cookieToken: string;
+    formToken: string;
+    sessionId: string;
+  }> {
+    const res = await http.get<Types.CheerioedResponse>(getUrl);
+    const cookies: Array<string> = res.headers["set-cookie"];
+
+    // __RequestVerificationToken cookie used for CSRF protection
+    const cookie = cookies
+      .find(string => string.includes("__RequestVerificationToken"))
+      .split(";")[0];
+    http.defaults.headers.Cookie += "; " + cookie;
+    const cookieToken = cookie.split("=")[1];
+
+    // ASP.NET_SessionID to match up with the __RequestVerificationToken
+    const sessionIdCookie = cookies
+      .find(string => string.includes("ASP.NET_SessionId"))
+      .split(";")[0];
+    http.defaults.headers.Cookie += "; " + sessionIdCookie;
+    const sessionId = sessionIdCookie.split("=")[1];
+
+    // __RequestVerificationToken form element used for CSRF protection
+    const formToken = res.data.$('[name="__RequestVerificationToken"]').val();
+
+    return { res, cookieToken, formToken, sessionId };
   }
 };
+
+export default unitemps;

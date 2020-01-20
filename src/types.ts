@@ -76,7 +76,7 @@ export type TimesheetResponse = {
   weekEnding: ParsedDate;
   hours: ParsedFloat;
   pay: ParsedMoney;
-  status: "Authorised" | "Entered" | "Paid" | "Rejected" | string;
+  status: "Authorised" | "Entered" | "Paid" | "Rejected" | "Saved" | string;
 };
 
 export type JobResponse = {
@@ -89,4 +89,24 @@ export type JobResponse = {
   start: ParsedDate;
   end: ParsedDate;
   status: "Current" | "Past" | string;
+};
+
+export type TimesheetHours = {
+  monday: Array<WorkPeriod>;
+  tuesday: Array<WorkPeriod>;
+  wednesday: Array<WorkPeriod>;
+  thursday: Array<WorkPeriod>;
+  friday: Array<WorkPeriod>;
+  saturday: Array<WorkPeriod>;
+  sunday: Array<WorkPeriod>;
+};
+
+export type WorkPeriod = {
+  from: HourAndMinute;
+  to: HourAndMinute;
+};
+
+export type HourAndMinute = {
+  hour: number;
+  minute: number;
 };
