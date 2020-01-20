@@ -19,6 +19,12 @@ export type ParsedFloat = {
   asFloat: number;
 } & ParsedText;
 
+export type PageDataResponse = {
+  from: number;
+  to: number;
+  total: number;
+};
+
 export type TimesheetResponse = {
   ref: string;
   id: string;
@@ -29,8 +35,14 @@ export type TimesheetResponse = {
   status: string;
 };
 
-export type PageDataResponse = {
-  from: number;
-  to: number;
-  total: number;
+export type JobResponse = {
+  ref: string;
+  company: string;
+  id: string;
+  jobTitle: string;
+  rateOfPay: ParsedFloat;
+  holidayRate: ParsedFloat;
+  start: ParsedDate;
+  end: ParsedDate;
+  status: string;
 };

@@ -105,5 +105,54 @@ export default {
       .map(parseInt);
 
     return { res, timesheets, pageData: { from, to, total } };
+  },
+
+  /**
+   * Get next 10 jobs
+   * These will be the ones displayed on https://www.unitemps.com/members/candidate/jobs
+   * @param page Page number
+   */
+  async getJobs(
+    page: number = 1
+  ): Promise<{
+    res: AxiosResponse<Types.CheerioedResponse>;
+    jobs: Array<Types.JobResponse>;
+    pageData: Types.PageDataResponse;
+  }> {
+    const res = await http.get<Types.CheerioedResponse>(
+      `${BASE_URL}/members/candidate/jobs?page=${page}`
+    );
+
+    const jobTableRowElems = res.data.$(".table tbody tr");
+    const jobs = jobTableRowElems
+      .toArray()
+      .map(cheerio)
+      .map(
+        ($): Types.JobResponse => ({
+          ref: $.find('[data-label="Ref"]').text(),
+          company: $.find('[data-label="Company"]').text(),
+          id: $.find('[data-label="Job title"] > a')
+            .attr("href")
+            .split("/")[4],
+          jobTitle: $.find('[data-label="Job title"]')
+            .text()
+            .trim(),
+          rateOfPay: moneyParser($.find('[data-label="Rate of pay"]').text()),
+          holidayRate: moneyParser(
+            $.find('[data-label="Holiday rate"]').text()
+          ),
+          start: dateParser($.find('[data-label="Start"]').text()),
+          end: dateParser($.find('[data-label="End"]').text()),
+          status: $.find('[data-label="Status"]').text()
+        })
+      );
+
+    const pageResultsElem = res.data.$(".page-results");
+    const { 0: from, 1: to, 2: total } = pageResultsElem
+      .text()
+      .match(/\d+/g)
+      .map(parseInt);
+
+    return { res, jobs, pageData: { from, to, total } };
   }
 };
