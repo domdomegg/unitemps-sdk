@@ -5,7 +5,7 @@ import * as Types from "../types";
  * @param rawText Raw text representing some money
  * @example moneyParser('£12.34')
  */
-const moneyParser = (rawText: string): Types.ParsedFloat => {
+const moneyParser = (rawText: string): Types.ParsedMoney => {
   const parsedText = rawText.replace(/[,\s]/g, "").replace("£", "");
 
   if (!/^\d+(\.\d\d)?$/.test(parsedText)) {

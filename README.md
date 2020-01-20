@@ -32,6 +32,14 @@ This is required before making any other calls
 unitemps.login('username', 'password')
 ```
 
+### Logout
+
+Clears session data locally.
+
+```js
+unitemps.logout()
+```
+
 ### Get timesheets
 
 Lists all timesheets
@@ -60,4 +68,39 @@ unitemps.login('username', 'password')
 //     hours: { asFloat: 2.5, asText: '2.50', asRawText: '2.50' },
 //     pay: { asFloat: 23.45, asText: '£23.45', asRawText: '£23.45' },
 //     status: 'Paid' } ]
+```
+
+
+### Get jobs
+
+Lists all timesheets
+
+Returns:
+- `res`: the axios response
+- `jobs`: an array of job objects
+- `pageData`: information which jobs are being listed
+
+```js
+unitemps.login('username', 'password')
+  .then(unitemps.getJobs)
+  .then(result => console.dir(result.jobs))
+
+// [ { ref: '2345678',
+//     company: 'Company McCompanyface',      
+//     id: '34567890',
+//     jobTitle: 'Do-er of things',
+//     rateOfPay: { asFloat: 12.34, asText: '£12.34', asRawText: '£\r\n12.34' },
+//     holidayRate: { asFloat: 1.23, asText: '£1.23', asRawText: '£\r\n1.23' },
+//     start: { asText: '2019-08-01', asRawText: '01/08/2019' },
+//     end: { asText: '2020-07-31', asRawText: '31/07/2020' },
+//     status: 'Current' },
+//   { ref: '456789',
+//     company: 'Company McCompanyface',
+//     id: '56789012',
+//     jobTitle: 'Do-er of other things',
+//     rateOfPay: { asFloat: 9.99, asText: '£9.99', asRawText: '£\r\n9.99' },
+//     holidayRate: { asFloat: 1.00, asText: '£1.00', asRawText: '£\r\n1.00' },
+//     start: { asText: '2019-01-01', asRawText: '01/01/2019' },
+//     end: { asText: '2019-07-31', asRawText: '31/07/2019' },
+//     status: 'Past' } ]
 ```
