@@ -58,6 +58,14 @@ it("handles extra whitespace in and around £100.00 correctly", () => {
   expect(moneyParser(" £100 . 00    ").asText).toBe("£100.00");
 });
 
+// Special case
+
+it("processes £--.-- correctly", () => {
+  expect(moneyParser("£--.--").asFloat).toBe(null);
+  expect(moneyParser("£--.--").asText).toBe(null);
+  expect(moneyParser("£--.--").asRawText).toBe("£--.--");
+});
+
 // Invalid
 
 it("throws when provided £1.00p", () => {

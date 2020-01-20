@@ -8,6 +8,14 @@ import * as Types from "../types";
 const moneyParser = (rawText: string): Types.ParsedMoney => {
   const parsedText = rawText.replace(/[,\s]/g, "").replace("£", "");
 
+  if (parsedText == "--.--") {
+    return {
+      asFloat: null,
+      asText: null,
+      asRawText: rawText.trim()
+    };
+  }
+
   if (!/^\d+(\.\d\d)?$/.test(parsedText)) {
     throw new Error("Not a valid money string: " + rawText);
   }
