@@ -6,7 +6,7 @@ import moneyParser from "./parsers/money";
 import hoursParser from "./parsers/hours";
 import dateParser from "./parsers/date";
 import { timeSheethoursToUnitempsForm } from "./util/timesheetHours";
-import { months } from "./util/date";
+import { toUnitempsDate } from "./util/date";
 
 const BASE_URL = "https://www.unitemps.com";
 
@@ -160,11 +160,12 @@ const unitemps = {
 
   /**
    * Save a draft timesheet, either creating a new one or updating an existing one.
-   * @param jobId Job ID to submit this timesheet under. Not updatable.
-   * @param weekEnding: Week ending date (Sunday) for this timesheet, in ISO 8601 format. Necessary if creating a timesheet.
-   * @param timesheetId: Timesheet ID. Necessary if updating a timesheet.
-   * @param hoursWorked: Hours worked to enter on the timesheet. Updatable - will replace any existing hours.
-   * @param notes: Notes to attach to the timesheet. Updatable - will replace any existing notes.
+   * @param options Options for creating the draft timesheet.
+   * @param options.jobId Job ID to submit this timesheet under. Not updatable.
+   * @param options.weekEnding: Week ending date (Sunday) for this timesheet, in ISO 8601 format (YYYY-MM-DD). Necessary if creating a timesheet.
+   * @param options.timesheetId: Timesheet ID. Necessary if updating a timesheet.
+   * @param options.hoursWorked: Hours worked to enter on the timesheet. Updatable - will replace any existing hours.
+   * @param options.notes: Notes to attach to the timesheet. Updatable - will replace any existing notes.
    */
   async saveDraftTimesheet({
     jobId,
@@ -201,22 +202,15 @@ const unitemps = {
       throw new Error("Invalid date format for weekEnding: " + weekEnding);
     }
 
-    // Creates a string like '19 January 2020'
-    const WeekEndingDate = isUpdate
-      ? ""
-      : `${weekEnding.substr(8, 2)} ${
-          months[parseInt(weekEnding.substr(5, 2))]
-        } ${weekEnding.substr(0, 4)}`;
-
     const res = await http.post<Types.CheerioedResponse>(
       `${BASE_URL}/members/candidate/createtimesheet/${jobId}`,
       qs.stringify({
         AssignmentId: jobId,
         Editing: isUpdate ? "True" : "False",
         timesheetId,
-        WeekEndingDate,
+        WeekEndingDate: toUnitempsDate(weekEnding),
         ...timeSheethoursToUnitempsForm(hoursWorked),
-        Notes: notes,
+        Notes: notes.replace(/\n/g, "\r\n"),
         submitAction: "Save",
         __RequestVerificationToken: formToken
       }),
