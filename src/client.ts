@@ -71,42 +71,28 @@ const unitemps = {
    * These will be the ones displayed on https://www.unitemps.com/members/candidate/timesheets
    * @param page Page number
    */
-  async getTimesheets(
+  getTimesheets(
     page: number = 1
   ): Promise<{
     res: AxiosResponse<Types.CheerioedResponse>;
-    timesheets: Array<Types.TimesheetResponse>;
+    data: Array<Types.TimesheetResponse>;
     pageData: Types.PageDataResponse;
   }> {
-    const res = await http.get<Types.CheerioedResponse>(
-      `${BASE_URL}/members/candidate/timesheets?page=${page}`
+    return unitemps._getPaginatedTableResource(
+      `${BASE_URL}/members/candidate/timesheets`,
+      page,
+      ($: Cheerio): Types.TimesheetResponse => ({
+        ref: $.find('[data-label="Ref"]').text(),
+        id: $.find('[data-label="Job title"] > a')
+          .attr("href")
+          .split("/")[4],
+        jobTitle: $.find('[data-label="Job title"]').text(),
+        weekEnding: dateParser($.find('[data-label="Week"]').text()),
+        hours: hoursParser($.find('[data-label="Hours"]').text()),
+        pay: moneyParser($.find('[data-label="Pay"]').text()),
+        status: $.find('[data-label="Status"]').text()
+      })
     );
-
-    const timesheetTableRowElems = res.data.$(".table tbody tr");
-    const timesheets = timesheetTableRowElems
-      .toArray()
-      .map(cheerio)
-      .map(
-        ($): Types.TimesheetResponse => ({
-          ref: $.find('[data-label="Ref"]').text(),
-          id: $.find('[data-label="Job title"] > a')
-            .attr("href")
-            .split("/")[4],
-          jobTitle: $.find('[data-label="Job title"]').text(),
-          weekEnding: dateParser($.find('[data-label="Week"]').text()),
-          hours: hoursParser($.find('[data-label="Hours"]').text()),
-          pay: moneyParser($.find('[data-label="Pay"]').text()),
-          status: $.find('[data-label="Status"]').text()
-        })
-      );
-
-    const pageResultsElem = res.data.$(".page-results");
-    const { 0: from, 1: to, 2: total } = pageResultsElem
-      .text()
-      .match(/\d+/g)
-      .map(parseInt);
-
-    return { res, timesheets, pageData: { from, to, total } };
   },
 
   /**
@@ -114,48 +100,32 @@ const unitemps = {
    * These will be the ones displayed on https://www.unitemps.com/members/candidate/jobs
    * @param page Page number
    */
-  async getJobs(
+  getJobs(
     page: number = 1
   ): Promise<{
     res: AxiosResponse<Types.CheerioedResponse>;
-    jobs: Array<Types.JobResponse>;
+    data: Array<Types.JobResponse>;
     pageData: Types.PageDataResponse;
   }> {
-    const res = await http.get<Types.CheerioedResponse>(
-      `${BASE_URL}/members/candidate/jobs?page=${page}`
+    return unitemps._getPaginatedTableResource(
+      `${BASE_URL}/members/candidate/jobs`,
+      page,
+      ($: Cheerio): Types.JobResponse => ({
+        ref: $.find('[data-label="Ref"]').text(),
+        company: $.find('[data-label="Company"]').text(),
+        id: $.find('[data-label="Job title"] > a')
+          .attr("href")
+          .split("/")[4],
+        jobTitle: $.find('[data-label="Job title"]')
+          .text()
+          .trim(),
+        rateOfPay: moneyParser($.find('[data-label="Rate of pay"]').text()),
+        holidayRate: moneyParser($.find('[data-label="Holiday rate"]').text()),
+        start: dateParser($.find('[data-label="Start"]').text()),
+        end: dateParser($.find('[data-label="End"]').text()),
+        status: $.find('[data-label="Status"]').text()
+      })
     );
-
-    const jobTableRowElems = res.data.$(".table tbody tr");
-    const jobs = jobTableRowElems
-      .toArray()
-      .map(cheerio)
-      .map(
-        ($): Types.JobResponse => ({
-          ref: $.find('[data-label="Ref"]').text(),
-          company: $.find('[data-label="Company"]').text(),
-          id: $.find('[data-label="Job title"] > a')
-            .attr("href")
-            .split("/")[4],
-          jobTitle: $.find('[data-label="Job title"]')
-            .text()
-            .trim(),
-          rateOfPay: moneyParser($.find('[data-label="Rate of pay"]').text()),
-          holidayRate: moneyParser(
-            $.find('[data-label="Holiday rate"]').text()
-          ),
-          start: dateParser($.find('[data-label="Start"]').text()),
-          end: dateParser($.find('[data-label="End"]').text()),
-          status: $.find('[data-label="Status"]').text()
-        })
-      );
-
-    const pageResultsElem = res.data.$(".page-results");
-    const { 0: from, 1: to, 2: total } = pageResultsElem
-      .text()
-      .match(/\d+/g)
-      .map(parseInt);
-
-    return { res, jobs, pageData: { from, to, total } };
   },
 
   /**
@@ -163,41 +133,27 @@ const unitemps = {
    * These will be the ones displayed on https://www.unitemps.com/members/candidate/applications
    * @param page Page number
    */
-  async getApplications(
+  getApplications(
     page: number = 1
   ): Promise<{
     res: AxiosResponse<Types.CheerioedResponse>;
-    applications: Array<Types.ApplicationResponse>;
+    data: Array<Types.ApplicationResponse>;
     pageData: Types.PageDataResponse;
   }> {
-    const res = await http.get<Types.CheerioedResponse>(
-      `${BASE_URL}/members/candidate/applications?page=${page}`
+    return unitemps._getPaginatedTableResource(
+      `${BASE_URL}/members/candidate/applications`,
+      page,
+      ($: Cheerio): Types.ApplicationResponse => ({
+        ref: $.find('[data-label="Ref"]').text(),
+        id: $.find('[data-label="Job title"] > a')
+          .attr("href")
+          .split("/")[4],
+        jobTitle: $.find('[data-label="Job title"]')
+          .text()
+          .trim(),
+        status: $.find('[data-label="Status"]').text()
+      })
     );
-
-    const applicationTableRowElems = res.data.$(".table tbody tr");
-    const applications = applicationTableRowElems
-      .toArray()
-      .map(cheerio)
-      .map(
-        ($): Types.ApplicationResponse => ({
-          ref: $.find('[data-label="Ref"]').text(),
-          id: $.find('[data-label="Job title"] > a')
-            .attr("href")
-            .split("/")[4],
-          jobTitle: $.find('[data-label="Job title"]')
-            .text()
-            .trim(),
-          status: $.find('[data-label="Status"]').text()
-        })
-      );
-
-    const pageResultsElem = res.data.$(".page-results");
-    const { 0: from, 1: to, 2: total } = pageResultsElem
-      .text()
-      .match(/\d+/g)
-      .map(parseInt);
-
-    return { res, applications, pageData: { from, to, total } };
   },
 
   /**
@@ -232,7 +188,7 @@ const unitemps = {
       }): Promise<{
     res: AxiosResponse<Types.CheerioedResponse>;
   }> {
-    const { formToken } = await unitemps.requireRequestVerificationAuth(
+    const { formToken } = await unitemps._requireRequestVerificationAuth(
       `${BASE_URL}/members/candidate/createtimesheet/${jobId}`
     );
 
@@ -267,7 +223,7 @@ const unitemps = {
     return { res };
   },
 
-  async requireRequestVerificationAuth(
+  async _requireRequestVerificationAuth(
     getUrl: string
   ): Promise<{
     res: AxiosResponse<Types.CheerioedResponse>;
@@ -296,6 +252,34 @@ const unitemps = {
     const formToken = res.data.$('[name="__RequestVerificationToken"]').val();
 
     return { res, cookieToken, formToken, sessionId };
+  },
+
+  async _getPaginatedTableResource<ItemType>(
+    endpoint: string,
+    page: number,
+    tableMapping: (value: Cheerio, index: number, array: Cheerio[]) => ItemType
+  ): Promise<{
+    res: AxiosResponse<Types.CheerioedResponse>;
+    data: Array<ItemType>;
+    pageData: Types.PageDataResponse;
+  }> {
+    const res = await http.get<Types.CheerioedResponse>(
+      `${endpoint}?page=${page}`
+    );
+
+    const data = res.data
+      .$(".table tbody tr")
+      .toArray()
+      .map(cheerio)
+      .map(tableMapping);
+
+    const pageResultsElem = res.data.$(".page-results");
+    const { 0: from, 1: to, 2: total } = pageResultsElem
+      .text()
+      .match(/\d+/g)
+      .map(n => parseInt(n));
+
+    return { res, data, pageData: { from, to, total } };
   }
 };
 
