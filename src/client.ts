@@ -191,13 +191,15 @@ const unitemps = {
    * @param options.timesheetId: Timesheet ID. Necessary if updating a timesheet.
    * @param options.hoursWorked: Hours worked to enter on the timesheet. Updatable - will replace any existing hours.
    * @param options.notes: Notes to attach to the timesheet. Updatable - will replace any existing notes.
+   * @param options.submitAction: Whether to save or submit the timesheet
    */
-  async saveDraftTimesheet({
+  async upsertTimesheet({
     jobId,
     weekEnding,
     timesheetId = "",
     hoursWorked,
-    notes
+    notes,
+    submitAction = "save"
   }:
     | {
         jobId: string | number;
@@ -205,6 +207,7 @@ const unitemps = {
         timesheetId?: string | number;
         hoursWorked: Types.TimesheetHours;
         notes: string;
+        submitAction: "save" | "submit";
       }
     | {
         jobId: string | number;
@@ -212,6 +215,7 @@ const unitemps = {
         timesheetId: string | number;
         hoursWorked: Types.TimesheetHours;
         notes: string;
+        submitAction: "save" | "submit";
       }): Promise<{
     res: AxiosResponse<Types.CheerioedResponse>;
   }> {
@@ -236,7 +240,7 @@ const unitemps = {
         WeekEndingDate: toUnitempsDate(weekEnding),
         ...timeSheethoursToUnitempsForm(hoursWorked),
         Notes: notes.replace(/\n/g, "\r\n"),
-        submitAction: "Save",
+        submitAction: submitAction[0].toUpperCase() + submitAction.slice(1),
         __RequestVerificationToken: formToken
       }),
       { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
