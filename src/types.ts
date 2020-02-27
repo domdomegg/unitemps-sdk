@@ -98,6 +98,12 @@ export type ApplicationResponse = {
   status: "Placed By Us" | "Unsuccessful" | string;
 };
 
+export type CVResponse = {
+  id: string;
+  cvTitle: string;
+  size: number;
+};
+
 export type TimesheetHours = {
   monday: Array<WorkPeriod>;
   tuesday: Array<WorkPeriod>;

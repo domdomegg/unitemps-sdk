@@ -157,6 +157,33 @@ const unitemps = {
   },
 
   /**
+   * Get next 10 CVs
+   * These will be the ones displayed on https://www.unitemps.com/members/candidate/documents
+   * @param page Page number
+   */
+  getCVs(
+    page: number = 1
+  ): Promise<{
+    res: AxiosResponse<Types.CheerioedResponse>;
+    data: Array<Types.CVResponse>;
+    pageData: Types.PageDataResponse;
+  }> {
+    return unitemps._getPaginatedTableResource(
+      `${BASE_URL}/members/candidate/documents`,
+      page,
+      ($: Cheerio): Types.CVResponse => ({
+        id: $.find('[data-label="Name"] > a')
+          .attr("href")
+          .split("/")[4],
+        cvTitle: $.find('[data-label="Name"]')
+          .text()
+          .trim(),
+        size: parseInt($.find('[data-label="Size"]').text())
+      })
+    );
+  },
+
+  /**
    * Save a draft timesheet, either creating a new one or updating an existing one.
    * @param options Options for creating the draft timesheet.
    * @param options.jobId Job ID to submit this timesheet under. Not updatable.
