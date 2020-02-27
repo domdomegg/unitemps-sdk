@@ -159,6 +159,48 @@ const unitemps = {
   },
 
   /**
+   * Get next 10 applications
+   * These will be the ones displayed on https://www.unitemps.com/members/candidate/applications
+   * @param page Page number
+   */
+  async getApplications(
+    page: number = 1
+  ): Promise<{
+    res: AxiosResponse<Types.CheerioedResponse>;
+    applications: Array<Types.ApplicationResponse>;
+    pageData: Types.PageDataResponse;
+  }> {
+    const res = await http.get<Types.CheerioedResponse>(
+      `${BASE_URL}/members/candidate/applications?page=${page}`
+    );
+
+    const applicationTableRowElems = res.data.$(".table tbody tr");
+    const applications = applicationTableRowElems
+      .toArray()
+      .map(cheerio)
+      .map(
+        ($): Types.ApplicationResponse => ({
+          ref: $.find('[data-label="Ref"]').text(),
+          id: $.find('[data-label="Job title"] > a')
+            .attr("href")
+            .split("/")[4],
+          jobTitle: $.find('[data-label="Job title"]')
+            .text()
+            .trim(),
+          status: $.find('[data-label="Status"]').text()
+        })
+      );
+
+    const pageResultsElem = res.data.$(".page-results");
+    const { 0: from, 1: to, 2: total } = pageResultsElem
+      .text()
+      .match(/\d+/g)
+      .map(parseInt);
+
+    return { res, applications, pageData: { from, to, total } };
+  },
+
+  /**
    * Save a draft timesheet, either creating a new one or updating an existing one.
    * @param options Options for creating the draft timesheet.
    * @param options.jobId Job ID to submit this timesheet under. Not updatable.

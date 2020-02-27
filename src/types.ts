@@ -91,6 +91,13 @@ export type JobResponse = {
   status: "Current" | "Past" | string;
 };
 
+export type ApplicationResponse = {
+  ref: string;
+  id: string;
+  jobTitle: string;
+  status: "Placed By Us" | "Unsuccessful" | string;
+};
+
 export type TimesheetHours = {
   monday: Array<WorkPeriod>;
   tuesday: Array<WorkPeriod>;
