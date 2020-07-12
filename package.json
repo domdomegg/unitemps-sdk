@@ -19,17 +19,17 @@
     "prepublishOnly": "npm run clean && npm run build"
   },
   "dependencies": {
-    "@types/cheerio": "^0.22.15",
-    "@types/node": "^13.1.8",
-    "axios": "^0.19.1",
+    "@types/cheerio": "^0.22.21",
+    "@types/node": "^13.13.14",
+    "axios": "^0.19.2",
     "cheerio": "^0.22.0"
   },
   "devDependencies": {
-    "@types/jest": "^24.9.0",
-    "jest": "^24.9.0",
+    "@types/jest": "^24.9.1",
+    "jest": "^26.1.0",
     "prettier": "^1.19.1",
-    "ts-jest": "^24.3.0",
-    "typescript": "^3.7.5"
+    "ts-jest": "^26.1.1",
+    "typescript": "^3.9.6"
   },
   "repository": {
     "type": "git",
