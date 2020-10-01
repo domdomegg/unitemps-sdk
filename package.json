@@ -12,6 +12,7 @@
   "scripts": {
     "pretest": "npm run build",
     "test": "jest",
+    "test:watch": "jest --watch",
     "lint": "prettier --parser typescript \"{src,test}/**/*.ts\" -l",
     "lint:fix": "prettier --parser typescript \"{src,test}/**/*.ts\" --write",
     "clean": "rm -rf dist",
