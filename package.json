@@ -22,7 +22,7 @@
   "dependencies": {
     "@types/cheerio": "^0.22.21",
     "@types/node": "^13.13.14",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "cheerio": "^0.22.0"
   },
   "devDependencies": {
