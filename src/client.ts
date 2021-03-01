@@ -8,7 +8,7 @@ import dateParser from "./parsers/date";
 import { timeSheethoursToUnitempsForm } from "./util/timesheetHours";
 import { toUnitempsDate } from "./util/date";
 
-const BASE_URL = "https://www.unitemps.com";
+const BASE_URL = "https://portal.unitemps.com";
 
 const http = axios.create({
   transformResponse: (data, headers): Types.CheerioedResponse => ({

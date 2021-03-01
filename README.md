@@ -46,13 +46,13 @@ Lists all timesheets
 
 Returns:
 - `res`: the axios response
-- `timesheets`: an array of timesheet objects
+- `data`: an array of timesheet objects
 - `pageData`: information which timesheets are being listed
 
 ```js
 unitemps.login('username', 'password')
-  .then(unitemps.getTimesheets)
-  .then(result => console.dir(result.timesheets))
+  .then(() => unitemps.getTimesheets())
+  .then(result => console.dir(result.data))
 
 // [ { ref: '1234567',
 //     id: '12345678',
@@ -77,13 +77,13 @@ Lists all timesheets
 
 Returns:
 - `res`: the axios response
-- `jobs`: an array of job objects
+- `data`: an array of job objects
 - `pageData`: information which jobs are being listed
 
 ```js
 unitemps.login('username', 'password')
-  .then(unitemps.getJobs)
-  .then(result => console.dir(result.jobs))
+  .then(() => unitemps.getJobs())
+  .then(result => console.dir(result.data))
 
 // [ { ref: '2345678',
 //     company: 'Company McCompanyface',      
