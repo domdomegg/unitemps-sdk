@@ -73,7 +73,7 @@ unitemps.login('username', 'password')
 
 ### Get jobs
 
-Lists all timesheets
+Lists all jobs
 
 Returns:
 - `res`: the axios response
