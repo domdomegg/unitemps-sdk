@@ -10,9 +10,8 @@
     "dist"
   ],
   "scripts": {
-    "pretest": "npm run build",
-    "test": "jest",
-    "test:watch": "jest --watch",
+    "test": "vitest run",
+    "test:watch": "vitest --watch",
     "lint": "prettier --parser typescript \"{src,test}/**/*.ts\" -l",
     "lint:fix": "prettier --parser typescript \"{src,test}/**/*.ts\" --write",
     "clean": "rm -rf dist",
@@ -23,21 +22,15 @@
     "@types/cheerio": "^0.22.21",
     "@types/node": "^13.13.14",
     "axios": "^1.6.0",
-    "cheerio": "^0.22.0"
+    "cheerio": "^0.22.0",
+    "vitest": "^0.34.6"
   },
   "devDependencies": {
-    "@types/jest": "^24.9.1",
-    "jest": "^26.1.0",
     "prettier": "^1.19.1",
-    "ts-jest": "^26.1.1",
     "typescript": "^5.2.2"
   },
   "repository": {
     "type": "git",
     "url": "git@github.com:domdomegg/unitemps-sdk.git"
-  },
-  "jest": {
-    "preset": "ts-jest",
-    "testEnvironment": "node"
   }
 }
