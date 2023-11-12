@@ -1,10 +1,11 @@
+import { expect, test } from "vitest";
 import { timeSheethoursToUnitempsForm } from "../../src/util/timesheetHours";
 
-it("processes no hours", () => {
+test("processes no hours", () => {
   expect(timeSheethoursToUnitempsForm({})).toEqual({});
 });
 
-it("processes one period on one day", () => {
+test("processes one period on one day", () => {
   expect(
     timeSheethoursToUnitempsForm({
       monday: [
@@ -28,7 +29,7 @@ it("processes one period on one day", () => {
   });
 });
 
-it("processes multiple periods on one day", () => {
+test("processes multiple periods on one day", () => {
   expect(
     timeSheethoursToUnitempsForm({
       monday: [
@@ -66,7 +67,7 @@ it("processes multiple periods on one day", () => {
   });
 });
 
-it("processes one period on multiple days", () => {
+test("processes one period on multiple days", () => {
   expect(
     timeSheethoursToUnitempsForm({
       monday: [
@@ -106,7 +107,7 @@ it("processes one period on multiple days", () => {
   });
 });
 
-it("processes multiple periods on multiple days", () => {
+test("processes multiple periods on multiple days", () => {
   expect(
     timeSheethoursToUnitempsForm({
       monday: [
@@ -174,7 +175,7 @@ it("processes multiple periods on multiple days", () => {
   });
 });
 
-it("processes back-to-back periods", () => {
+test("processes back-to-back periods", () => {
   expect(
     timeSheethoursToUnitempsForm({
       monday: [
@@ -208,7 +209,7 @@ it("processes back-to-back periods", () => {
   });
 });
 
-it("sorts periods", () => {
+test("sorts periods", () => {
   expect(
     timeSheethoursToUnitempsForm({
       monday: [
@@ -246,7 +247,7 @@ it("sorts periods", () => {
   });
 });
 
-it("sorts and handles back-to-back periods", () => {
+test("sorts and handles back-to-back periods", () => {
   expect(
     timeSheethoursToUnitempsForm({
       monday: [
@@ -280,7 +281,7 @@ it("sorts and handles back-to-back periods", () => {
   });
 });
 
-it("rejects overlapping periods", () => {
+test("rejects overlapping periods", () => {
   expect(() =>
     timeSheethoursToUnitempsForm({
       monday: [
@@ -309,7 +310,7 @@ it("rejects overlapping periods", () => {
   ).toThrow();
 });
 
-it("rejects overlapping periods within an hour", () => {
+test("rejects overlapping periods within an hour", () => {
   expect(() =>
     timeSheethoursToUnitempsForm({
       monday: [
@@ -338,7 +339,7 @@ it("rejects overlapping periods within an hour", () => {
   ).toThrow();
 });
 
-it("rejects overlapping periods out of order", () => {
+test("rejects overlapping periods out of order", () => {
   expect(() =>
     timeSheethoursToUnitempsForm({
       monday: [

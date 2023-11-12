@@ -4,7 +4,7 @@ PRs are welcomed, please submit them on [Github](https://github.com/domdomegg/un
 
 Install dependencies with `npm install`
 
-Uses Jest for tests - run `npm run test` to run them.
+Uses Vitest for tests - run `npm run test` to run them.
 
 Uses JavaScript Standard Style - run `npm run lint` to view issues, and `npm run lint:fix` to automagically fix them.
 
