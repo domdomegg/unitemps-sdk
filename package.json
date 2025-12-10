@@ -23,7 +23,7 @@
     "@types/node": "^13.13.14",
     "axios": "^1.6.0",
     "cheerio": "^0.22.0",
-    "vitest": "^0.34.6"
+    "vitest": "^4.0.15"
   },
   "devDependencies": {
     "prettier": "^1.19.1",
