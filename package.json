@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "@types/cheerio": "^0.22.21",
-    "@types/node": "^13.13.14",
+    "@types/node": "^22.0.0",
     "axios": "^1.6.0",
     "cheerio": "^0.22.0",
     "vitest": "^4.0.15"
